@@ -42,7 +42,7 @@ export default function ProjectForm({ project = null, onDone, onCancel }) {
 
         if (isEditing) {
             transform((formData) => ({ ...formData, _method: 'put' }));
-            post(`/projects/${project.id}`, {
+            post(`/manage/projects/${project.id}`, {
                 forceFormData: true,
                 preserveScroll: true,
                 onSuccess: () => {
@@ -51,11 +51,10 @@ export default function ProjectForm({ project = null, onDone, onCancel }) {
                     onDone?.();
                 },
                 onFinish: () => transform((d) => d),
-
                 onError: () => {},
             });
         } else {
-            post('/projects', {
+            post('/manage/projects', {
                 forceFormData: true,
                 preserveScroll: true,
                 onSuccess: () => {

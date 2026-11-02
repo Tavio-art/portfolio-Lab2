@@ -3,12 +3,13 @@
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+Route::get('/', fn () => redirect()->route('projects.public'));
 
-Route::resource('projects', ProjectController::class)->only([
-    'store',
-    'update',
-    'destroy',
-]);
+Route::get('/projects', [ProjectController::class, 'publicIndex'])->name('projects.public');
 
-Route::redirect('/projects', '/');
+Route::prefix('manage')->group(function () {
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+});

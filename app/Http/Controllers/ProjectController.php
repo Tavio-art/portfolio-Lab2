@@ -10,9 +10,16 @@ use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function publicIndex()
     {
         return Inertia::render('ProjectsPublic', [
+            'projects' => Project::orderByDesc('date_completed')->get(),
+        ]);
+    }
+
+    public function index()
+    {
+        return Inertia::render('Projects/Index', [
             'projects' => Project::orderByDesc('date_completed')->get(),
         ]);
     }

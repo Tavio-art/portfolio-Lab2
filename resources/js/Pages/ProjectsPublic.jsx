@@ -1,9 +1,8 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import FilterButtons from '../Components/FilterButtons';
 import Layout from '../Components/Layout';
 import ProjectDialog from '../Components/ProjectDialog';
-import ProjectForm from '../Components/ProjectForm';
 import SectionTitle from '../Components/SectionTitle';
 
 const PLACEHOLDER = '/images/project-portfolio.svg';
@@ -27,20 +26,12 @@ function mapProject(project) {
         text: project.description,
         learned: project.learned || '',
         link: project.project_url || null,
-        tech_stack: project.tech_stack,
-        description: project.description,
-        project_url: project.project_url,
-        repository_url: project.repository_url,
-        date_completed: project.date_completed,
     };
 }
 
 export default function ProjectsPublic({ projects: dbProjects = [] }) {
-    const { flash } = usePage().props;
     const [projectFilter, setProjectFilter] = useState('all');
     const [activeProject, setActiveProject] = useState(null);
-    const [formMode, setFormMode] = useState(null);
-    const [deleting, setDeleting] = useState(null);
 
     const projects = useMemo(() => dbProjects.map(mapProject), [dbProjects]);
 
@@ -52,14 +43,6 @@ export default function ProjectsPublic({ projects: dbProjects = [] }) {
         [projects, projectFilter],
     );
 
-    function confirmDelete() {
-        if (!deleting) return;
-        router.delete(`/projects/${deleting.id}`, {
-            preserveScroll: true,
-            onSuccess: () => setDeleting(null),
-        });
-    }
-
     return (
         <Layout>
             <Head title="Projects" />
@@ -68,7 +51,6 @@ export default function ProjectsPublic({ projects: dbProjects = [] }) {
                 <div className="sec-in">
                     <SectionTitle>Projects</SectionTitle>
                     <div>
-
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <FilterButtons
                                 label="Filter projects by type"
@@ -82,25 +64,21 @@ export default function ProjectsPublic({ projects: dbProjects = [] }) {
                                     { value: 'web', label: 'Web' },
                                 ]}
                             />
-                            <button
-                                type="button"
-                                className="btn btn-main"
-                                onClick={() => setFormMode('add')}
-                            >
-                                Add project
-                            </button>
+                            <Link href="/manage/projects" className="btn btn-main">
+                                Manage projects
+                            </Link>
                         </div>
 
-                        {flash?.success && (
-                            <p
-                                className="mt-4 rounded-md border border-accent bg-card px-4 py-3 font-bold text-accent"
-                                role="status"
-                            >
-                                {flash.success}
-                            </p>
-                        )}
-
                         <div className="mt-6 grid gap-6 md:grid-cols-2">
+                            {visibleProjects.length === 0 && (
+                                <p className="text-muted md:col-span-2">
+                                    No projects to show yet. Add one from{' '}
+                                    <Link href="/manage/projects" className="font-bold text-accent underline">
+                                        Manage projects
+                                    </Link>
+                                    .
+                                </p>
+                            )}
                             {visibleProjects.map((project) => (
                                 <article
                                     key={project.id}
@@ -140,24 +118,10 @@ export default function ProjectsPublic({ projects: dbProjects = [] }) {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
-                                                    Open in Figma
+                                                    Open project
                                                     <span className="sr-only"> (opens in a new tab)</span>
                                                 </a>
                                             )}
-                                            <button
-                                                type="button"
-                                                className="btn btn-line"
-                                                onClick={() => setFormMode(project)}
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-line"
-                                                onClick={() => setDeleting(project)}
-                                            >
-                                                Delete
-                                            </button>
                                         </div>
                                     </div>
                                 </article>
@@ -168,49 +132,6 @@ export default function ProjectsPublic({ projects: dbProjects = [] }) {
             </section>
 
             <ProjectDialog project={activeProject} onClose={() => setActiveProject(null)} />
-
-            {formMode && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-                    role="dialog"
-                    aria-modal="true"
-                >
-                    <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border-2 border-ink bg-card p-6 text-ink">
-                        <ProjectForm
-                            project={formMode === 'add' ? null : formMode}
-                            onDone={() => setFormMode(null)}
-                            onCancel={() => setFormMode(null)}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {deleting && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-                    role="dialog"
-                    aria-modal="true"
-                >
-                    <div className="w-full max-w-md rounded-lg border-2 border-ink bg-card p-6 text-ink">
-                        <h2 className="font-display text-xl font-extrabold">Delete project?</h2>
-                        <p className="mt-3">
-                            Are you sure you want to delete <strong>{deleting.title}</strong>?
-                        </p>
-                        <div className="mt-6 flex flex-wrap gap-3">
-                            <button type="button" className="btn btn-main" onClick={confirmDelete}>
-                                Delete
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-line"
-                                onClick={() => setDeleting(null)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </Layout>
     );
 }
