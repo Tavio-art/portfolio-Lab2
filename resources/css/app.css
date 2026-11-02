@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.jsx';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-body);
+
+    --color-paper: var(--paper);
+    --color-card: var(--card);
+    --color-ink: var(--ink);
+    --color-muted: var(--muted);
+    --color-line: var(--line);
+    --color-accent: var(--accent);
+    --color-mark: var(--mark);
+    --color-danger: var(--danger);
+}
+
+:root {
+    --paper: #F1F6F4;
+    --card: #FFFFFF;
+    --ink: #10262E;
+    --muted: #44605A;
+    --line: #C5D6D0;
+    --accent: #1F6F78;
+    --mark: #FFD23F;
+    --danger: #B3261E;
+}
+
+.dark {
+    --paper: #0C1A1F;
+    --card: #13262D;
+    --ink: #E8F2EF;
+    --muted: #A7C0BA;
+    --line: #284149;
+    --accent: #6CC4CC;
+    --danger: #FF9E94;
+}
+
+html {
+    scroll-behavior: smooth;
+    min-height: 100%;
+    min-height: 100dvh;
+    background-color: var(--paper);
+}
+
+body {
+    min-height: 100%;
+    min-height: 100dvh;
+    background-color: var(--paper);
+    overflow-x: hidden;
+}
+
+.page-fill {
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.grid-paper {
+    background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.rise {
+    animation: rise 0.7s ease-out both;
+}
+
+.rise-2 {
+    animation-delay: 0.15s;
+}
+
+.rise-3 {
+    animation-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .rise {
+        animation: none;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center rounded-md px-5 py-3 font-bold transition-colors;
+    }
+
+    .btn-main {
+        @apply bg-mark text-[#10262E] hover:brightness-95;
+    }
+
+    .btn-line {
+        @apply border-2 border-ink text-ink hover:bg-ink hover:text-paper;
+    }
+
+    .pill {
+        @apply rounded-full border border-line px-3 py-1 text-sm;
+    }
+
+    .toggle {
+        @apply rounded-md border border-line bg-card px-4 py-2 font-bold aria-pressed:bg-ink aria-pressed:text-paper;
+    }
+
+    .field {
+        @apply w-full rounded-md border-2 border-line bg-card px-3 py-2 text-ink aria-[invalid=true]:border-danger;
+    }
+
+    .err {
+        @apply min-h-6 text-sm font-bold text-danger;
+    }
+
+    .sec {
+        @apply flex w-full flex-1 flex-col justify-center py-10 md:py-16;
+    }
+
+    .sec-in {
+        @apply mx-auto grid w-full max-w-6xl gap-8 px-5 lg:grid-cols-[13rem_1fr] lg:gap-12;
+    }
+
+    .sec-h {
+        @apply font-display text-3xl font-extrabold lg:sticky lg:top-24 lg:self-start;
+    }
+}
+
+:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+}
